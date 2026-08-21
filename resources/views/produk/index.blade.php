@@ -1,208 +1,542 @@
+
 @extends('layouts.app')
 
-@section('title', 'Katalog Produk')
+@section('title', 'Katalog Produk - Premium Edition')
 
 @section('content')
 
 @include('layouts.navbar')
 
+{{-- Font & Icons --}}
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Syne:wght@700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+
 <style>
-    :root {
-        --pos-primary: #4f46e5;
-        --pos-primary-hover: #4338ca;
-        --pos-dark: #0f172a;
-        --pos-light-bg: #f8fafc;
-    }
-
     body {
-        background-color: var(--pos-light-bg);
+        background-color: #030712 !important;
+        background-image:
+            radial-gradient(at 0% 0%, rgba(99, 102, 241, 0.15) 0px, transparent 50%),
+            radial-gradient(at 100% 0%, rgba(168, 85, 247, 0.12) 0px, transparent 50%),
+            radial-gradient(at 100% 100%, rgba(236, 72, 153, 0.10) 0px, transparent 50%),
+            radial-gradient(at 0% 100%, rgba(59, 130, 246, 0.15) 0px, transparent 50%) !important;
+        background-attachment: fixed !important;
+        color: #f3f4f6;
+        font-family: 'Plus Jakarta Sans', sans-serif;
     }
 
-    .header-card {
-        background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+    .catalog-container {
+        position: relative;
+        z-index: 5;
+        animation: fadeIn 0.8s cubic-bezier(0.16, 1, 0.3, 1);
     }
 
-    .btn-primary-custom {
-        background-color: var(--pos-primary);
+    .glass-card {
+        background: rgba(17, 24, 39, 0.65);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border: 1px solid rgba(255, 255, 255, 0.10);
+        border-radius: 20px;
+        box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.5);
+    }
+
+    .header-tag {
+        background: rgba(99, 102, 241, 0.15);
+        color: #818cf8;
+        border: 1px solid rgba(129, 140, 248, 0.30);
+        font-weight: 600;
+        font-size: 11px;
+        letter-spacing: 0.5px;
+    }
+
+    .btn-add-product {
+        background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
         color: #ffffff;
         border: none;
+        border-radius: 12px;
+        font-weight: 700;
+        padding: 10px 22px;
+        box-shadow: 0 8px 20px rgba(79, 70, 229, 0.35);
+        transition: all 0.3s ease;
+        text-decoration: none;
+    }
+
+    .btn-add-product:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 12px 25px rgba(124, 58, 237, 0.5);
+        color: #ffffff;
+    }
+
+    .search-wrapper {
+        background: rgba(15, 23, 42, 0.6);
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        border-radius: 14px;
+        padding: 4px 8px;
+        transition: all 0.3s ease;
+    }
+
+    .search-wrapper:focus-within {
+        border-color: #818cf8;
+        box-shadow:
+            0 0 0 4px rgba(99, 102, 241, 0.15),
+            0 0 20px rgba(99, 102, 241, 0.20);
+    }
+
+    .search-wrapper .form-control {
+        background: transparent !important;
+        border: none !important;
+        color: #ffffff !important;
+        font-size: 14px;
+        padding-left: 0;
+    }
+
+    .search-wrapper .form-control::placeholder {
+        color: #6b7280;
+    }
+
+    .btn-filter-submit {
+        background: rgba(255, 255, 255, 0.08);
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        color: #f3f4f6;
+        border-radius: 10px;
+        font-weight: 600;
+        font-size: 13px;
         transition: all 0.2s ease;
     }
 
-    .btn-primary-custom:hover {
-        background-color: var(--pos-primary-hover);
+    .btn-filter-submit:hover {
+        background: rgba(255, 255, 255, 0.15);
         color: #ffffff;
     }
 
-    .product-card {
-        transition: transform 0.2s ease, box-shadow 0.2s ease;
-        border: 1px solid #f1f5f9;
+    .table-luxury {
+        color: #e5e7eb !important;
+        vertical-align: middle;
+        margin-bottom: 0;
+    }
+
+    .table-luxury thead th {
+        background: rgba(15, 23, 42, 0.85) !important;
+        color: #9ca3af !important;
+        font-size: 11px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.8px;
+        padding: 16px 20px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.10) !important;
+    }
+
+    .table-luxury tbody tr {
+        border-bottom: 1px solid rgba(255, 255, 255, 0.05) !important;
+        transition: all 0.2s ease;
+    }
+
+    .table-luxury tbody tr:hover {
+        background: rgba(255, 255, 255, 0.03) !important;
+    }
+
+    .table-luxury tbody td {
+        padding: 16px 20px;
+        font-size: 14px;
+        border: none !important;
+    }
+
+    .product-thumb-frame {
+        width: 48px;
+        height: 48px;
+        border-radius: 12px;
         overflow: hidden;
-    }
-
-    .product-card:hover {
-        transform: translateY(-4px);
-        box-shadow: 0 10px 20px rgba(15, 23, 42, 0.08) !important;
-    }
-
-    .product-image-placeholder {
-        height: 180px;
-        background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.12);
         display: flex;
         align-items: center;
         justify-content: center;
-        color: #64748b;
-        position: relative;
+        transition: transform 0.3s ease;
     }
 
-    .badge-stock {
-        position: absolute;
-        top: 12px;
-        right: 12px;
-        background: rgba(15, 23, 42, 0.75);
-        backdrop-filter: blur(4px);
-        color: #ffffff;
-        border: 1px solid rgba(255, 255, 255, 0.15);
+    .table-luxury tbody tr:hover .product-thumb-frame {
+        transform: scale(1.08);
+        border-color: rgba(129, 140, 248, 0.40);
     }
 
-    .badge-user {
-        position: absolute;
-        bottom: 12px;
-        left: 12px;
-        background: rgba(15, 23, 42, 0.75);
-        backdrop-filter: blur(4px);
-        color: #cbd5e1;
+    .product-price-tag {
+        font-family: 'Syne', sans-serif;
+        font-weight: 800;
+        font-size: 15px;
+        background: linear-gradient(135deg, #a5b4fc 0%, #c084fc 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+
+    .price-empty {
+        color: #f87171;
+        font-size: 13px;
+        font-weight: 700;
+    }
+
+    .badge-stock-luxury {
+        font-size: 11px;
+        font-weight: 700;
+        padding: 6px 14px;
+        border-radius: 20px;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+    }
+
+    .badge-stock-safe {
+        background: rgba(34, 197, 94, 0.15);
+        color: #4ade80;
+        border: 1px solid rgba(34, 197, 94, 0.30);
+    }
+
+    .badge-stock-low {
+        background: rgba(245, 158, 11, 0.15);
+        color: #fbbf24;
+        border: 1px solid rgba(245, 158, 11, 0.30);
+    }
+
+    .badge-stock-empty {
+        background: rgba(239, 68, 68, 0.15);
+        color: #f87171;
+        border: 1px solid rgba(239, 68, 68, 0.30);
+    }
+
+    .btn-action-glass {
+        width: 36px;
+        height: 36px;
+        border-radius: 10px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 14px;
+        transition: all 0.2s ease;
+        border: none;
+        text-decoration: none;
+    }
+
+    .btn-action-edit {
+        background: rgba(245, 158, 11, 0.12);
+        color: #fbbf24;
+        border: 1px solid rgba(245, 158, 11, 0.25);
+    }
+
+    .btn-action-edit:hover {
+        background: rgba(245, 158, 11, 0.25);
+        color: #fef08a;
+        transform: translateY(-2px);
+    }
+
+    .btn-action-delete {
+        background: rgba(239, 68, 68, 0.12);
+        color: #f87171;
+        border: 1px solid rgba(239, 68, 68, 0.25);
+    }
+
+    .btn-action-delete:hover {
+        background: rgba(239, 68, 68, 0.25);
+        color: #fca5a5;
+        transform: translateY(-2px);
+    }
+
+    .empty-state {
+        padding: 70px 20px !important;
+    }
+
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+            transform: translateY(15px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
     }
 </style>
 
-<div class="container-fluid py-4">
+<div class="container-fluid px-4 py-4 catalog-container">
 
     {{-- HEADER --}}
-    <div class="card header-card text-white p-4 mb-4 rounded-4 border-0 shadow-sm">
+    <div class="glass-card p-4 mb-4">
         <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3">
+
             <div>
                 <div class="d-flex align-items-center gap-2 mb-2">
-                    <span class="badge px-3 py-1 rounded-pill" style="background-color: rgba(79, 70, 229, 0.2); color: #818cf8; border: 1px solid rgba(129, 140, 248, 0.3);">
-                        <i class="bi bi-box-seam me-1"></i> MANAJEMEN STOK
+                    <span class="badge header-tag px-3 py-1 rounded-pill">
+                        <i class="bi bi-box-seam me-1"></i>
+                        MANAJEMEN INVENTARIS
                     </span>
                 </div>
-                <h2 class="fw-bold m-0">Katalog Produk</h2>
-                <p class="text-secondary mb-0 mt-1 small">
-                    Kelola stok dan daftar harga produk toko secara real-time
+
+                <h2 class="fw-bold m-0 text-white"
+                    style="font-family: 'Syne', sans-serif;">
+                    Katalog Produk
+                </h2>
+
+                <p class="text-muted mb-0 mt-1 small">
+                    Kelola ketersediaan stok, harga, dan rincian produk toko.
                 </p>
             </div>
+
             <div>
-                <a href="{{ Route::has('produk.create') ? route('produk.create') : url('/produk/create') }}" class="btn btn-primary-custom px-4 py-2 rounded-3 fw-semibold d-inline-flex align-items-center gap-2 shadow-sm">
-                    <i class="bi bi-plus-lg fs-6"></i>
-                    <span>Tambah Produk Baru</span>
+                <a href="{{ Route::has('produk.create') ? route('produk.create') : url('/produk/create') }}"
+                   class="btn-add-product d-inline-flex align-items-center gap-2">
+                    <i class="bi bi-plus-circle-fill"></i>
+                    <span>Tambah Produk</span>
                 </a>
             </div>
+
         </div>
     </div>
 
-    {{-- SEARCH & FILTER BAR --}}
-    <div class="card border-0 shadow-sm rounded-4 p-3 mb-4">
-        <form action="{{ Route::has('produk.index') ? route('produk.index') : url('/produk') }}" method="GET">
-            <div class="row g-2">
-                <div class="col-md-10">
-                    <div class="input-group">
-                        <span class="input-group-text bg-white border-end-0 text-muted ps-3">
-                            <i class="bi bi-search"></i>
-                        </span>
-                        <input 
-                            type="text" 
-                            name="search" 
-                            class="form-control border-start-0 ps-0 shadow-none" 
-                            placeholder="Cari nama produk..." 
+    {{-- SEARCH --}}
+    <div class="glass-card p-3 mb-4">
+        <form action="{{ Route::has('produk.index') ? route('produk.index') : url('/produk') }}"
+              method="GET">
+
+            <div class="row g-2 align-items-center">
+
+                <div class="col-12 col-md-9">
+                    <div class="search-wrapper d-flex align-items-center px-3">
+
+                        <i class="bi bi-search text-muted me-2 fs-6"></i>
+
+                        <input
+                            type="text"
+                            name="search"
+                            class="form-control shadow-none"
+                            placeholder="Cari nama produk atau kategori..."
                             value="{{ request('search') }}"
                         >
+
+                        @if(request('search'))
+                            <a href="{{ Route::has('produk.index') ? route('produk.index') : url('/produk') }}"
+                               class="text-muted text-decoration-none small ms-2">
+                                <i class="bi bi-x-circle-fill"></i>
+                            </a>
+                        @endif
+
                     </div>
                 </div>
-                <div class="col-md-2">
-                    <button type="submit" class="btn btn-primary-custom w-100 fw-semibold">
-                        Cari
+
+                <div class="col-12 col-md-3">
+                    <button type="submit"
+                            class="btn btn-filter-submit w-100 py-2 d-flex align-items-center justify-content-center gap-2">
+                        <i class="bi bi-funnel-fill"></i>
+                        <span>Terapkan Filter</span>
                     </button>
                 </div>
+
             </div>
         </form>
     </div>
 
-    {{-- DAFTAR PRODUK GRID --}}
-    <div class="row g-4 mb-4">
-        @forelse($produk as $item)
-            <div class="col-12 col-sm-6 col-md-4 col-lg-3">
-                <div class="card product-card rounded-4 shadow-sm h-100 border-0 bg-white">
-                    
-                    {{-- Gambar / Placeholder Produk --}}
-                    <div class="product-image-placeholder">
-                        @if(isset($item->foto) && $item->foto)
-                            <img src="{{ asset('storage/' . $item->foto) }}" alt="{{ $item->nama }}" class="w-100 h-100 object-fit-cover">
-                        @else
-                            <i class="bi bi-box-seam display-4 opacity-50"></i>
-                        @endif
+    {{-- TABEL --}}
+    <div class="glass-card p-2 p-md-3">
 
-                        {{-- Badge Stok --}}
-                        <span class="badge badge-stock px-2.5 py-1.5 rounded-3 font-monospace small">
-                            Stok: {{ $item->stok }}
-                        </span>
+        <div class="table-responsive rounded-4 overflow-hidden">
 
-                        {{-- Badge Author --}}
-                        <span class="badge badge-user px-2 py-1 rounded-2 small fw-normal">
-                            <i class="bi bi-person-fill me-1"></i> {{ $item->user->name ?? 'Administrator' }}
-                        </span>
-                    </div>
+            <table class="table table-luxury">
 
-                    {{-- Info Produk --}}
-                    <div class="card-body p-3 d-flex flex-column justify-content-between">
-                        <div>
-                            <h6 class="fw-bold text-dark mb-1 text-truncate" title="{{ $item->nama }}">
-                                {{ $item->nama }}
-                            </h6>
-                            <p class="text-indigo fw-bold mb-2" style="color: var(--pos-primary);">
-                                Rp {{ number_format($item->harga ?? 0, 0, ',', '.') }}
-                            </p>
-                        </div>
+                <thead>
+                    <tr>
+                        <th width="80" class="text-center">Gambar</th>
+                        <th>Nama Produk</th>
+                        <th>Harga Jual</th>
+                        <th class="text-center">Status Stok</th>
+                        <th>Petugas Input</th>
+                        <th width="120" class="text-center">Aksi</th>
+                    </tr>
+                </thead>
 
-                        {{-- Tombol Aksi --}}
-                        <div class="d-flex gap-2 mt-2 pt-2 border-top">
-                            <a href="{{ Route::has('produk.edit') ? route('produk.edit', $item->id) : url('/produk/' . $item->id . '/edit') }}" class="btn btn-sm btn-light text-dark w-100 fw-semibold rounded-2 border">
-                                <i class="bi bi-pencil me-1"></i> Edit
-                            </a>
-                            <form action="{{ Route::has('produk.destroy') ? route('produk.destroy', $item->id) : url('/produk/' . $item->id) }}" method="POST" class="w-100" onsubmit="return confirm('Yakin ingin menghapus produk ini?')">
-                                @csrf
-                                @method('DELETE')
-                                <button type="submit" class="btn btn-sm btn-outline-danger w-100 fw-semibold rounded-2">
-                                    <i class="bi bi-trash me-1"></i> Hapus
-                                </button>
-                            </form>
-                        </div>
-                    </div>
+                <tbody>
 
-                </div>
-            </div>
-        @empty
-            <div class="col-12">
-                <div class="card border-0 shadow-sm rounded-4 p-5 text-center bg-white">
-                    <i class="bi bi-box-seam display-1 text-muted opacity-25 mb-3"></i>
-                    <h5 class="fw-bold text-dark">Belum Ada Produk</h5>
-                    <p class="text-muted small mb-3">Tidak ada data produk yang ditemukan atau diketik dalam pencarian.</p>
-                    <div>
-                        <a href="{{ Route::has('produk.create') ? route('produk.create') : url('/produk/create') }}" class="btn btn-primary-custom px-4 py-2 rounded-3 fw-semibold">
-                            <i class="bi bi-plus-lg me-1"></i> Tambah Produk Sekarang
-                        </a>
-                    </div>
-                </div>
-            </div>
-        @endforelse
-    </div>
+                    @forelse($produk as $item)
 
-    {{-- PAGINASI --}}
-    @if(method_exists($produk, 'hasPages') && $produk->hasPages())
-        <div class="d-flex justify-content-center">
-            {{ $produk->links() }}
+                        @php
+                            /*
+                             * Ambil harga dari field harga.
+                             * Jika aplikasi kamu memakai harga_jual,
+                             * ganti menjadi $item->harga_jual.
+                             */
+                            $harga = $item->harga ?? null;
+
+                            $stok = (int) ($item->stok ?? 0);
+
+                            if ($stok <= 0) {
+                                $badgeStyle = 'badge-stock-empty';
+                                $iconStyle = 'bi-exclamation-octagon-fill';
+                            } elseif ($stok <= 5) {
+                                $badgeStyle = 'badge-stock-low';
+                                $iconStyle = 'bi-exclamation-triangle-fill';
+                            } else {
+                                $badgeStyle = 'badge-stock-safe';
+                                $iconStyle = 'bi-check-circle-fill';
+                            }
+                        @endphp
+
+                        <tr>
+
+                            {{-- GAMBAR --}}
+                            <td class="text-center">
+
+                                <div class="product-thumb-frame mx-auto">
+
+                                    @if(!empty($item->foto))
+
+                                        <img
+                                            src="{{ asset('storage/' . $item->foto) }}"
+                                            alt="{{ $item->nama }}"
+                                            class="w-100 h-100 object-fit-cover"
+                                        >
+
+                                    @else
+
+                                        <i class="bi bi-box-seam fs-5 text-muted opacity-50"></i>
+
+                                    @endif
+
+                                </div>
+
+                            </td>
+
+                            {{-- NAMA --}}
+                            <td>
+
+                                <div class="fw-bold text-white">
+                                    {{ $item->nama }}
+                                </div>
+
+                                <small class="text-muted" style="font-size: 11px;">
+                                    SKU: #PRD-{{ str_pad($item->id, 3, '0', STR_PAD_LEFT) }}
+                                </small>
+
+                            </td>
+
+                            {{-- HARGA --}}
+                            <td>
+
+                                @if($harga !== null && $harga !== '' && (float) $harga > 0)
+
+                                    <span class="product-price-tag">
+                                        Rp {{ number_format((float) $harga, 0, ',', '.') }}
+                                    </span>
+
+                                @else
+
+                                    <span class="price-empty">
+                                        <i class="bi bi-exclamation-circle me-1"></i>
+                                        Harga belum diatur
+                                    </span>
+
+                                @endif
+
+                            </td>
+
+                            {{-- STOK --}}
+                            <td class="text-center">
+
+                                <span class="badge-stock-luxury {{ $badgeStyle }}">
+
+                                    <i class="bi {{ $iconStyle }}"></i>
+
+                                    {{ number_format($stok, 0, ',', '.') }} Unit
+
+                                </span>
+
+                            </td>
+
+                            {{-- USER --}}
+                            <td>
+
+                                <div class="d-flex align-items-center gap-2">
+
+                                    <i class="bi bi-person-circle text-muted"></i>
+
+                                    <span class="text-gray-300">
+                                        {{ optional($item->user)->name ?? 'Admin' }}
+                                    </span>
+
+                                </div>
+
+                            </td>
+
+                            {{-- AKSI --}}
+                            <td class="text-center">
+
+                                <div class="d-flex align-items-center justify-content-center gap-2">
+
+                                    {{-- EDIT --}}
+                                    <a
+                                        href="{{ Route::has('produk.edit') ? route('produk.edit', $item->id) : url('/produk/' . $item->id . '/edit') }}"
+                                        class="btn-action-glass btn-action-edit"
+                                        title="Edit Produk"
+                                    >
+                                        <i class="bi bi-pencil-fill"></i>
+                                    </a>
+
+                                    {{-- HAPUS --}}
+                                    <form
+                                        action="{{ Route::has('produk.destroy') ? route('produk.destroy', $item->id) : url('/produk/' . $item->id) }}"
+                                        method="POST"
+                                        class="d-inline"
+                                        onsubmit="return confirm('Apakah Anda yakin ingin menghapus produk ini?')"
+                                    >
+
+                                        @csrf
+                                        @method('DELETE')
+
+                                        <button
+                                            type="submit"
+                                            class="btn-action-glass btn-action-delete"
+                                            title="Hapus Produk"
+                                        >
+                                            <i class="bi bi-trash-fill"></i>
+                                        </button>
+
+                                    </form>
+
+                                </div>
+
+                            </td>
+
+                        </tr>
+
+                    @empty
+
+                        <tr>
+                            <td colspan="6" class="text-center empty-state text-muted">
+
+                                <i class="bi bi-inbox display-4 text-muted opacity-25 d-block mb-3"></i>
+
+                                <span class="fw-medium">
+                                    Belum ada data produk yang terdaftar.
+                                </span>
+
+                            </td>
+                        </tr>
+
+                    @endforelse
+
+                </tbody>
+
+            </table>
+
         </div>
-    @endif
+
+        {{-- PAGINATION --}}
+        @if(method_exists($produk, 'hasPages') && $produk->hasPages())
+
+            <div class="d-flex justify-content-end mt-4 px-2">
+                {{ $produk->links() }}
+            </div>
+
+        @endif
+
+    </div>
 
 </div>
 
 @endsection
+
