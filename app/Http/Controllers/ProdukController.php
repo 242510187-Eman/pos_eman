@@ -13,13 +13,14 @@ class ProdukController extends Controller
      */
     public function index(Request $request)
     {
-        $query = Produk::query();
+        // Gunakan eager loading 'user' untuk mencegah masalah N+1 Query
+        $query = Produk::with('user');
 
         if ($request->filled('search')) {
             $query->where('nama', 'like', '%' . $request->search . '%');
         }
 
-        $produk = $query->latest()->paginate(10);
+        $produk = $query->latest()->paginate(10)->withQueryString();
 
         return view('produk.index', compact('produk'));
     }
@@ -38,7 +39,7 @@ class ProdukController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'nama'        => 'required|string|max:255',
+            'nama'       => 'required|string|max:255',
             'harga_beli' => 'required|numeric',
             'harga_jual' => 'required|numeric',
             'stok'       => 'required|integer',
@@ -56,9 +57,8 @@ class ProdukController extends Controller
             $data['foto'] = $request->file('foto')->store('produk', 'public');
         }
 
-        if (auth()->check()) {
-            $data['user_id'] = auth()->id();
-        }
+        // Pastikan user_id terisi dengan ID user yang sedang login
+        $data['user_id'] = auth()->id();
 
         Produk::create($data);
 
@@ -88,7 +88,7 @@ class ProdukController extends Controller
     public function update(Request $request, Produk $produk)
     {
         $request->validate([
-            'nama'        => 'required|string|max:255',
+            'nama'       => 'required|string|max:255',
             'harga_beli' => 'required|numeric',
             'harga_jual' => 'required|numeric',
             'stok'       => 'required|integer',
@@ -102,7 +102,7 @@ class ProdukController extends Controller
             'stok',
         ]);
 
-        // Hapus foto
+        // Hapus foto jika diminta
         if ($request->has('hapus_foto')) {
             if ($produk->foto && Storage::disk('public')->exists($produk->foto)) {
                 Storage::disk('public')->delete($produk->foto);
@@ -110,7 +110,7 @@ class ProdukController extends Controller
             $data['foto'] = null;
         }
 
-        // Upload foto baru
+        // Upload foto baru jika ada
         if ($request->hasFile('foto')) {
             if ($produk->foto && Storage::disk('public')->exists($produk->foto)) {
                 Storage::disk('public')->delete($produk->foto);

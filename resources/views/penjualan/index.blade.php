@@ -1,6 +1,4 @@
-# Daftar Penjualan — Background Berbeda
 
-```blade
 @extends('layouts.app')
 
 @section('title', 'Daftar Penjualan')

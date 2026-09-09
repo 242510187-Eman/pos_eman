@@ -13,11 +13,11 @@ return new class extends Migration
     {
         Schema::create('produk', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->constrained('users', 'id');
-            $table->string('foto');
+            $table->foreignId('user_id')->constrained('users')->cascadeOnDelete();
+            $table->string('foto')->nullable(); // Menambahkan nullable()
             $table->string('nama');
-            $table->integer('harga_beli');
-            $table->integer('harga_jual');
+            $table->decimal('harga_beli', 12, 2); // Disarankan menggunakan decimal untuk nilai uang
+            $table->decimal('harga_jual', 12, 2); 
             $table->integer('stok');
             $table->index('nama');
             $table->timestamps();

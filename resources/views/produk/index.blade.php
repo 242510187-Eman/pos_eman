@@ -351,31 +351,25 @@
                 </thead>
 
                 <tbody>
+@forelse($produk as $item)
 
-                    @forelse($produk as $item)
+    @php
+        // PERBAIKAN: Gunakan $item->harga_jual sesuai nama kolom di database/controller
+        $harga = $item->harga_jual ?? null;
 
-                        @php
-                            /*
-                             * Ambil harga dari field harga.
-                             * Jika aplikasi kamu memakai harga_jual,
-                             * ganti menjadi $item->harga_jual.
-                             */
-                            $harga = $item->harga ?? null;
+        $stok = (int) ($item->stok ?? 0);
 
-                            $stok = (int) ($item->stok ?? 0);
-
-                            if ($stok <= 0) {
-                                $badgeStyle = 'badge-stock-empty';
-                                $iconStyle = 'bi-exclamation-octagon-fill';
-                            } elseif ($stok <= 5) {
-                                $badgeStyle = 'badge-stock-low';
-                                $iconStyle = 'bi-exclamation-triangle-fill';
-                            } else {
-                                $badgeStyle = 'badge-stock-safe';
-                                $iconStyle = 'bi-check-circle-fill';
-                            }
-                        @endphp
-
+        if ($stok <= 0) {
+            $badgeStyle = 'badge-stock-empty';
+            $iconStyle = 'bi-exclamation-octagon-fill';
+        } elseif ($stok <= 5) {
+            $badgeStyle = 'badge-stock-low';
+            $iconStyle = 'bi-exclamation-triangle-fill';
+        } else {
+            $badgeStyle = 'badge-stock-safe';
+            $iconStyle = 'bi-check-circle-fill';
+        }
+    @endphp
                         <tr>
 
                             {{-- GAMBAR --}}
@@ -404,7 +398,7 @@
                             {{-- NAMA --}}
                             <td>
 
-                                <div class="fw-bold text-white">
+                                <div class="fw-bold text-black">
                                     {{ $item->nama }}
                                 </div>
 

@@ -57,17 +57,60 @@
                     </a>
                 </li>
 
+                {{-- Tentang --}}
+                <li class="nav-item">
+                    <a class="nav-link px-3 py-2 rounded-3 text-white fw-medium {{ request()->is('tentang*') ? 'active' : 'text-opacity-75' }}" 
+                       style="{{ request()->is('tentang*') ? 'background-color: #4f46e5;' : '' }}" 
+                       href="{{ Route::has('tentang.index') ? route('tentang.index') : url('/tentang') }}">
+                        <i class="bi bi-info-circle me-1"></i> Tentang
+                    </a>
+                </li>
+
             </ul>
 
-            {{-- Logout Button --}}
-            <form action="{{ Route::has('logout') ? route('logout') : url('/logout') }}" method="POST" class="d-flex m-0">
-                @csrf
-                <button type="submit" class="btn btn-danger px-3 py-2 rounded-3 fw-semibold d-flex align-items-center gap-2 border-0" style="background-color: #ef4444;">
-                    <i class="bi bi-box-arrow-right"></i>
-                    <span>Logout</span>
-                </button>
-            </form>
+            {{-- Right Side: Real-time Clock & Logout Button --}}
+            <div class="d-flex align-items-center gap-3">
+                
+                {{-- Live Clock WIB --}}
+                <div class="text-white fw-medium px-3 py-2 rounded-3 d-none d-lg-flex align-items-center gap-2" style="background-color: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1);">
+                    <i class="bi bi-clock text-info"></i>
+                    <span id="clock-time">--:--:--</span>
+                    <span class="text-white-50 fs-7">WIB</span>
+                </div>
+
+                {{-- Logout Button --}}
+                <form action="{{ Route::has('logout') ? route('logout') : url('/logout') }}" method="POST" class="d-flex m-0">
+                    @csrf
+                    <button type="submit" class="btn btn-danger px-3 py-2 rounded-3 fw-semibold d-flex align-items-center gap-2 border-0" style="background-color: #ef4444;">
+                        <i class="bi bi-box-arrow-right"></i>
+                        <span>Logout</span>
+                    </button>
+                </form>
+
+            </div>
 
         </div>
     </div>
 </nav>
+
+{{-- Script JavaScript Jam Real-time WIB --}}
+<script>
+    function updateClock() {
+        const now = new Date();
+        const options = { 
+            timeZone: 'Asia/Jakarta', 
+            hour: '2-digit', 
+            minute: '2-digit', 
+            second: '2-digit', 
+            hour12: false 
+        };
+        const timeString = new Intl.DateTimeFormat('id-ID', options).format(now);
+        const clockElement = document.getElementById('clock-time');
+        if (clockElement) {
+            clockElement.textContent = timeString;
+        }
+    }
+
+    setInterval(updateClock, 1000);
+    updateClock();
+</script>
